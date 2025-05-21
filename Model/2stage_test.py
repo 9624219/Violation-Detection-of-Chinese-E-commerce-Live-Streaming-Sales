@@ -2,13 +2,8 @@ from datasets import load_dataset
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = "1"  # （代表仅使用第0，1号GPU）
-# test_file = "../data/correct/test1_class3.txt"
-# test_file = "../data/new_data_85/test_ori_8.5_pre.txt"
-# test_file = "../data/class3/model/test_816_class3_all.txt"  # 0-不违规，1-涉嫌违规，2-严重违规
-# test_file = "../data/class3/model/test1_class3.txt"  # 0-不违规，1-涉嫌违规，2-严重违规
-# test_file = "../data/new_test_88/new_test300_class3.txt"
-# test_file = "../data/827/test2_allin_827V1.txt"
-test_file = "../data/827/test2_allin91.txt"
+
+test_file = ""
 # 使用 load_dataset 函数加载数据
 dataset = load_dataset('text', data_files={'test': test_file})
 
@@ -23,12 +18,6 @@ dataset = dataset.map(process_data)
 
 from transformers import BertTokenizer, BertModel
 tokenizer = BertTokenizer.from_pretrained('/home/huang/dy_live/prompt_tuning/bert-base-chinese')
-# bert_input = tokenizer(dataset['train'][0]['text'], padding='max_length',
-#                        max_length=465,
-#                        truncation=True,
-#                        return_tensors="pt")  # pt表示返回tensor
-# print(bert_input)
-# model = BertModel.from_pretrained('/home/huang/dy_live/prompt_tuning/bert-base-chinese')
 from torch.utils.data import Dataset, DataLoader
 
 class MyDataset(Dataset):
@@ -95,8 +84,6 @@ batch_size = 8
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 random_seed = 42
 save_path = '/home/huang/dy_live/prompt_tuning/BertForClassification/bert_checkpoint'
-# save_path = '/home/huang/dy_live/prompt_tuning/BertForClassification/bert_checkpoint/827'
-# save_path = '/home/huang/dy_live/prompt_tuning/BertForClassification/bert_checkpoint/926'
 save_path2 = '/home/huang/dy_live/prompt_tuning/BertForClassification/bert_checkpoint/class3V2'
 def setup_seed(seed):
     torch.manual_seed(seed)
@@ -112,14 +99,6 @@ setup_seed(random_seed)
 # 定义模型
 model = BertClassifier2()  # 是否违规
 model2 = BertClassifier() # 违规类型
-
-# model.load_state_dict(torch.load(os.path.join(save_path, 'train_3538_815_f1_0.911.pt')))
-# model.load_state_dict(torch.load(os.path.join(save_path, 'stage1.pt')))
-
-# model2.load_state_dict(torch.load(os.path.join(save_path2, 'train_3538_f10.83.pt')))
-# model2.load_state_dict(torch.load(os.path.join(save_path, 'stage2V2.pt')))
-# model2.load_state_dict(torch.load(os.path.join(save_path2, 'stage2.pt')))
-
 model.load_state_dict(torch.load(os.path.join(save_path, 'stage1.pt')))
 model2.load_state_dict(torch.load(os.path.join(save_path2, 'stage2.pt')))
 
@@ -168,10 +147,7 @@ def evaluate(model, dataset):
     print(f'precision: {precision}')
     print(f'recall: {recall}')
     print(f'f1: {f1}')
-    # 将all_preds写入文件
-    # with open("after240_result.txt", "w", encoding="utf-8") as file:
-    #     for i in all_preds:
-    #         file.write(str(i) + "\n")
+
 
 
 evaluate(model, test_dataset)

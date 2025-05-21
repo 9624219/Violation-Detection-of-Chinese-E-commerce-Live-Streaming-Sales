@@ -41,7 +41,7 @@ set_seed(15)
 
 from openprompt.plms import load_plm
 
-# plm, tokenizer, model_config, WrapperClass = load_plm('bert', '/home/huang/dy_live/prompt_tuning/bert-base-chinese')
+
 plm, tokenizer, model_config, WrapperClass = load_plm('bert', '/home/huang/dy_live/prompt_tuning/chinese-roberta-wwm-ext')
 
 dataset = {}
@@ -50,16 +50,7 @@ dataset = {}
 dataset['test'] = []
 
 
-# with open('data/manual_correct/test_manual_correct.txt', 'r', encoding='utf-8') as file:
-# with open('data/correct/test_ori.txt', 'r', encoding='utf-8') as file:
-# with open('data/new_test_88/new_test_predict.txt', 'r', encoding='utf-8') as file:
-# with open('data/new_data_85/test_ori_8.5_pre.txt', 'r', encoding='utf-8') as file:
-# with open('data/827/test2_allin91.txt', 'r', encoding='utf-8') as file:
-# with open('data/827/test1_allin_827V1.txt', 'r', encoding='utf-8') as file:
 with open('data/827/test2_allin91.txt', 'r', encoding='utf-8') as file:
-# with open('data/correct/test_ori_814.txt', 'r', encoding='utf-8') as file:
-# with open('data/manual_correct/train_manual_correct.txt', 'r', encoding='utf-8') as file:
-# with open('data/aid_label/train_82_more.txt', 'r', encoding='utf-8') as file:
     lines = file.readlines()
     cur = 0
     for line in lines:
@@ -82,8 +73,6 @@ batch_s = 16
 
 mytemplate = ManualTemplate(tokenizer=tokenizer).from_file(path=f"/home/huang/dy_live/prompt_tuning/scripts/manual_template_831.txt", choice=0)
 
-# mytemplate = PtuningTemplate(model=plm, tokenizer=tokenize/r).from_file(f"/home/huang/dy_live/prompt_tuning/scripts/ptuning_template.txt", choice=0)
-#
 
 myverbalizer = KnowledgeableVerbalizer(tokenizer, classes=class_labels, candidate_frac=cutoff,
                                        pred_temp=1.0, max_token_split=-1).from_file(
@@ -101,7 +90,7 @@ if use_cuda:
     prompt_model = prompt_model.cuda()
 
 
-# zero-shot test
+
 test_dataloader = PromptDataLoader(dataset=dataset["test"], template=mytemplate, tokenizer=tokenizer,
                                    tokenizer_wrapper_class=WrapperClass, max_seq_length=max_seq_l, decoder_max_length=3,
                                    batch_size=batch_s, shuffle=False, teacher_forcing=False, predict_eos_token=False,
@@ -183,11 +172,7 @@ def prompt_initialize(verbalizer, prompt_model, init_dataloader):
             logits = prompt_model(batch)
         verbalizer.optimize_to_initialize()
 
-
-
-# 2025/2/8  15:00  prompt-learning最终版本./roberta-model/more_data/class3_831_1337.ckpt
 prompt_model.load_state_dict(torch.load(f"./roberta-model/more_data/class3_831_1337.ckpt"))
-# prompt_model.load_state_dict(torch.load(f"./roberta-model/more_data/class3_831_1415.ckpt"))
 prompt_model = prompt_model.cuda()
 data_set = evaluate(prompt_model, test_dataloader, desc="Test")
 test_acc = data_set[0]

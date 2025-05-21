@@ -1,11 +1,7 @@
 from datasets import load_dataset
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score
 
-
-# test_file = "../../data/class3/model/test_model_correct_class3_8_5.txt"
-# test_file = "../../data/class3/model/test_816_class3_all.txt"
-test_file = "../../data/827/test1_allin_827V1.txt"
-# test_file = "../../data/827/test2_allin_827V1.txt"
+test_file = ""
 # 使用 load_dataset 函数加载数据
 dataset = load_dataset('text', data_files={'test': test_file})
 
@@ -19,12 +15,6 @@ dataset = dataset.map(process_data)
 
 from transformers import BertTokenizer, BertModel
 tokenizer = BertTokenizer.from_pretrained('/home/huang/dy_live/prompt_tuning/bert-base-chinese')
-# bert_input = tokenizer(dataset['train'][0]['text'], padding='max_length',
-#                        max_length=465,
-#                        truncation=True,
-#                        return_tensors="pt")  # pt表示返回tensor
-# print(bert_input)
-# model = BertModel.from_pretrained('/home/huang/dy_live/prompt_tuning/bert-base-chinese')
 from torch.utils.data import Dataset, DataLoader
 
 class MyDataset(Dataset):

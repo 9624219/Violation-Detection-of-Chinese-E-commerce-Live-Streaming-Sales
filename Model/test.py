@@ -3,16 +3,7 @@ from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_
 
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = "1"  # （代表仅使用第0，1号GPU）
-# test_file = "../data/831/val_stage_1.txt"
-# test_file = "../data/correct/test_812.txt"
-# test_file = "../data/correct/test1_stage1.txt"
-# test_file = "../data/827/test1_allin_827V1.txt"
-test_file = "../data/827/test2_allin91.txt"
-# test_file = "../data/new_test_88/test2_stage1.txt"
-# test_file = "../data/new_data_85/test_ori_8.5_pre.txt"
-# test_file = "../data/new_test_88/test_zjh_1.txt"
-# test_file = "../data/shuffle_1001_1500_tu.txt"
-# test_file = "../data/rest_data/label_rest_shuffle.txt"
+test_file = ""
 # 使用 load_dataset 函数加载数据
 dataset = load_dataset('text', data_files={'test': test_file})
 
@@ -25,14 +16,8 @@ def process_data(example):
 dataset = dataset.map(process_data)
 
 from transformers import BertTokenizer, BertModel
-# tokenizer = BertTokenizer.from_pretrained('/home/huang/dy_live/prompt_tuning/bert-base-chinese')
 tokenizer = BertTokenizer.from_pretrained('/home/huang/dy_live/prompt_tuning/chinese-roberta-wwm-ext')
-# bert_input = tokenizer(dataset['train'][0]['text'], padding='max_length',
-#                        max_length=465,
-#                        truncation=True,
-#                        return_tensors="pt")  # pt表示返回tensor
-# print(bert_input)
-# model = BertModel.from_pretrained('/home/huang/dy_live/prompt_tuning/bert-base-chinese')
+
 from torch.utils.data import Dataset, DataLoader
 
 class MyDataset(Dataset):
@@ -61,18 +46,13 @@ import torch.nn.functional as F
 class BertClassifier(nn.Module):
     def __init__(self):
         super(BertClassifier, self).__init__()
-        # self.bert = BertModel.from_pretrained("/home/huang/dy_live/prompt_tuning/bert-base-chinese")
         self.bert = BertModel.from_pretrained("/home/huang/dy_live/prompt_tuning/chinese-roberta-wwm-ext")
         self.dropout = nn.Dropout(0.5)
         self.linear = nn.Linear(768, 3)
-        # self.linear = nn.Linear(768, 10)
-        # self.relu = nn.ReLU()
-        # self.relu = nn.Softmax(dim=1)
     def forward(self, input_id, mask):
         _, pooled_output = self.bert(input_ids=input_id, attention_mask=mask, return_dict=False)
         dropout_output = self.dropout(pooled_output)
         linear_output = self.linear(dropout_output)
-        # final_layer = self.relu(linear_output)
         final_layer = F.softmax(linear_output, dim=1)
         return final_layer
 
@@ -87,7 +67,6 @@ import os
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 random_seed = 42
-# save_path = '/home/huang/dy_live/prompt_tuning/BertForClassification/bert_checkpoint/830'
 save_path = '/home/huang/dy_live/prompt_tuning/BertForClassification/bert_checkpoint/class3'
 def setup_seed(seed):
     torch.manual_seed(seed)
@@ -104,22 +83,9 @@ setup_seed(random_seed)
 model = BertClassifier()
 # 定义损失函数和优化器
 model = model.to(device)
-# model.load_state_dict(torch.load(os.path.join(save_path, 'allin91_1350.pt')))
-# model.load_state_dict(torch.load(os.path.join(save_path, 'allin_wo_aug_921.pt')))
-
-
-'''
-BERT:allin_wo_aug_921.pt
-BERT with DA :/home/huang/dy_live/prompt_tuning/BertForClassification/bert_checkpoint/830/allin91_1350.pt
-'''
-# model.load_state_dict(torch.load(os.path.join(save_path, 'allin91_1350.pt')))   # 2025/2/18
 
 model.load_state_dict(torch.load(os.path.join(save_path, 'roberta_412.pt')))
 
-
-# model.load_state_dict(torch.load(os.path.join(save_path, 'allin_LLMval_925.pt')))
-# model.load_state_dict(torch.load(os.path.join(save_path, 'stage2V1_val.pt')))
-# model.load_state_dict(torch.load(os.path.join(save_path, 'train_3538_816_F1_0.854.pt')))  # 前
 model = model.to(device)
 model.eval()
 class_0_score = []

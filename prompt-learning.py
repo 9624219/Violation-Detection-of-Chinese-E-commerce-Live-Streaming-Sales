@@ -51,7 +51,8 @@ dataset['all'] = []
 dataset['train'] = []
 dataset['validation'] = []
 dataset['test'] = []
-with open('data/827/train_allin_827V2.txt', 'r', encoding='utf-8') as file:
+# train
+with open('', 'r', encoding='utf-8') as file:
     lines = file.readlines()
     cur = 0
     for line in lines:
@@ -68,8 +69,8 @@ with open('data/827/train_allin_827V2.txt', 'r', encoding='utf-8') as file:
         cur+=1
         dataset['train'].append(input_example)
 
-
-with open('data/827/test1.txt', 'r', encoding='utf-8') as file:
+# test
+with open('', 'r', encoding='utf-8') as file:
     lines = file.readlines()
     cur = 0
     for line in lines:

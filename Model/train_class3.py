@@ -4,15 +4,8 @@ from transformers import AutoTokenizer
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = "0"  # （代表仅使用第0，1号GPU）
 # 定义数据文件路径
-# train_file = "../data/new_data_85/train_8_5_0.5_v2.txt"
-# train_file = "../data/correct/train_ori.txt"
-# test_file = "../data/correct/test_ori.txt"
-train_file = "../../data/827/train_allin_827V1.txt"
-# train_file = "../../data/827/train_allin_allLLM_val925.txt"
-# train_file = "../../data/827/train_allin_val.txt"
-# test_file = "../../data/827/val_allin_val.txt"
-# test_file = "../../data/827/val_allin_allLLM_val925.txt"
-test_file = "../../data/827/val_allin.txt"
+train_file = ""
+test_file = ""
 # 使用 load_dataset 函数加载数据
 dataset = load_dataset('text', data_files={'train': train_file, 'test': test_file})
 
