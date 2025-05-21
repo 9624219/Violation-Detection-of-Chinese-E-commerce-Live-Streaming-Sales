@@ -46,4 +46,4 @@ python Model/2stage_test.py
 
 ## Results
 
-<img src="D:\软件集合\Typora\Pic\roc.png" style="zoom:50%;" />
+![Result](https://github.com/9624219/Violation-Detection-of-Chinese-E-commerce-Live-Streaming-Sales/blob/master/assets/roc.png)
