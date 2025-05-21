@@ -1,0 +1,1 @@
+{"placeholder": "text_a"},类别：{"mask"},类别可以是合规或者违规。
